@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import uvicorn
-from nanoclaw.web import app
+from nanoclaw.server import app  # Fixed: Pointing to the rich WebSocket server
 from nanoclaw.config import ASSISTANT_NAME, DATA_DIR, DB_PATH, STORE_DIR, WORKSPACE_DIR
 from nanoclaw.db import init_db
 from nanoclaw.memory import ensure_workspace

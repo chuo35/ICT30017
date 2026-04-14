@@ -14,7 +14,7 @@
     <button onclick="send()">Send</button>
 
     <script>
-        const apiKey = "YOUR_OWNER_ID_HERE"; // Must match your .env OWNER_ID
+        const apiKey = "local"; // Must match your .env OWNER_ID
 
         async function send() {
             const input = document.getElementById('msg');
@@ -24,13 +24,21 @@
             
             chat.innerHTML += `<p class="user"><b>You:</b> ${text}</p>`;
             
-            const res = await fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
-                body: JSON.stringify({ message: text })
-            });
-            const data = await res.json();
-            chat.innerHTML += `<p class="bot"><b>Bot:</b> ${data.response}</p>`;
+            try {
+                const res = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    chat.innerHTML += `<p class="bot"><b>Bot:</b> ${data.response}</p>`;
+                } else {
+                    chat.innerHTML += `<p class="bot"><b>Error:</b> ${data.detail || 'Unknown error'}</p>`;
+                }
+            } catch (error) {
+                chat.innerHTML += `<p class="bot"><b>Error:</b> ${error.message}</p>`;
+            }
             chat.scrollTop = chat.scrollHeight;
         }
 

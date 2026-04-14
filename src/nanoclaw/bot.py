@@ -44,7 +44,8 @@ async def _handle_message(update: Update, context) -> None:
 
     await context.bot.send_chat_action(chat_id=chat_id, action=ChatAction.TYPING)
 
-    response = await run_agent(user_text, context.bot, chat_id, str(DB_PATH))
+    # Fixed: Updated to match the new run_agent signature
+    response = await run_agent(user_text, str(DB_PATH))
 
     # Archive to conversations/ for long-term memory
     await archive_exchange(user_text, response, chat_id)
@@ -56,7 +57,8 @@ async def _handle_message(update: Update, context) -> None:
 
 
 async def _post_init(application: Application) -> None:
-    scheduler = setup_scheduler(application.bot, str(DB_PATH))
+    # Fixed: Removed the outdated application.bot argument
+    scheduler = setup_scheduler(str(DB_PATH))
     scheduler.start()
     logger.info("Scheduler started")
 

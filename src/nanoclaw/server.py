@@ -17,7 +17,8 @@ logger = logging.getLogger(__name__)
 # ── Lifespan: start scheduler on boot ────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    scheduler = setup_scheduler(bot=None, db_path=str(DB_PATH))
+    # Fixed: Removed the outdated bot=None argument
+    scheduler = setup_scheduler(str(DB_PATH))
     scheduler.start()
     logger.info("Scheduler started")
     yield
@@ -72,13 +73,8 @@ async def websocket_chat(websocket: WebSocket):
             # Send typing indicator
             await websocket.send_json({"type": "typing", "content": ""})
  
-            # Run the AI agent (same core logic as before)
-            response = await run_agent(
-                user_text,
-                bot=None,           # no Telegram bot needed
-                chat_id=WEB_CHAT_ID,
-                db_path=str(DB_PATH),
-            )
+            # Fixed: Updated to match the new run_agent signature (prompt, db_path)
+            response = await run_agent(user_text, str(DB_PATH))
  
             # Archive conversation for long-term memory
             await archive_exchange(user_text, response, WEB_CHAT_ID)
